@@ -15,3 +15,6 @@ class DefaultConfig:
     APP_PASSWORD = os.environ.get("MicrosoftAppPassword", "")
     APP_TYPE = os.environ.get("MicrosoftAppType", "MultiTenant")
     APP_TENANTID = os.environ.get("MicrosoftAppTenantId", "")
+    ENDPOINT_URL = os.environ.get("ENDPOINT_URL")
+    DEPLOYMENT_NAME = os.environ.get("DEPLOYMENT_NAME")
+    AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY")

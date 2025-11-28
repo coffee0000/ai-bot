@@ -6,14 +6,14 @@ from botbuilder.core import ActivityHandler, MessageFactory, TurnContext
 from botbuilder.schema import ChannelAccount
 from openai import AzureOpenAI
 
-endpoint = os.getenv("ENDPOINT_URL")
-deployment = os.getenv("DEPLOYMENT_NAME")
-subscription_key = os.getenv("AZURE_OPENAI_API_KEY")
+from config import DefaultConfig
+
+CONFIG = DefaultConfig()
 
 # Initialize Azure OpenAI client with key-based authentication
 client = AzureOpenAI(
-    azure_endpoint=endpoint,
-    api_key=subscription_key,
+    azure_endpoint=CONFIG.ENDPOINT_URL,
+    api_key=CONFIG.AZURE_OPENAI_API_KEY,
     api_version="2025-01-01-preview",
 )
 
@@ -56,7 +56,7 @@ class EchoBot(ActivityHandler):
 
         # Generate the completion
         completion = client.chat.completions.create(
-            model=deployment,
+            model=CONFIG.DEPLOYMENT_NAME,
             messages=messages,
             max_completion_tokens=100000,
             stop=None,
