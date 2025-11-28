@@ -1,17 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-
 import sys
 import traceback
 from datetime import datetime
 from http import HTTPStatus
 
-from aiohttp import web
-from aiohttp.web import Request, Response, json_response
-from botbuilder.core import (
-    TurnContext,
-)
-from botbuilder.core.integration import aiohttp_error_middleware
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from botbuilder.core import TurnContext
 from botbuilder.integration.aiohttp import CloudAdapter, ConfigurationBotFrameworkAuthentication
 from botbuilder.schema import Activity, ActivityTypes
 
@@ -20,27 +14,22 @@ from config import DefaultConfig
 
 CONFIG = DefaultConfig()
 
-# Create adapter.
-# See https://aka.ms/about-bot-adapter to learn more about how bots work.
+# 创建 FastAPI 应用
+APP = FastAPI()
+
+# 创建适配器
 ADAPTER = CloudAdapter(ConfigurationBotFrameworkAuthentication(CONFIG))
 
-
-# Catch-all for errors.
+# 错误处理函数
 async def on_error(context: TurnContext, error: Exception):
-    # This check writes out errors to console log .vs. app insights.
-    # NOTE: In production environment, you should consider logging this to Azure
-    #       application insights.
     print(f"\n [on_turn_error] unhandled error: {error}", file=sys.stderr)
     traceback.print_exc()
 
-    # Send a message to the user
+    # 发送错误消息
     await context.send_activity("The bot encountered an error or bug.")
-    await context.send_activity(
-        "To continue to run this bot, please fix the bot source code."
-    )
-    # Send a trace activity if we're talking to the Bot Framework Emulator
+    await context.send_activity("To continue to run this bot, please fix the bot source code.")
+    
     if context.activity.channel_id == "emulator":
-        # Create a trace activity that contains the error object
         trace_activity = Activity(
             label="TurnError",
             name="on_turn_error Trace",
@@ -49,26 +38,19 @@ async def on_error(context: TurnContext, error: Exception):
             value=f"{error}",
             value_type="https://www.botframework.com/schemas/error",
         )
-        # Send a trace activity, which will be displayed in Bot Framework Emulator
         await context.send_activity(trace_activity)
-
 
 ADAPTER.on_turn_error = on_error
 
-# Create the Bot
+# 创建Bot实例
 BOT = EchoBot()
 
-
-# Listen for incoming requests on /api/messages
-async def messages(req: Request) -> Response:
+# 处理请求的路由
+@APP.post("/api/messages")
+async def messages(req: Request):
     return await ADAPTER.process(req, BOT)
 
-
-APP = web.Application(middlewares=[aiohttp_error_middleware])
-APP.router.add_post("/api/messages", messages)
-
+# 运行 FastAPI 应用
 if __name__ == "__main__":
-    try:
-        web.run_app(APP, host="0.0.0.0", port=CONFIG.PORT)
-    except Exception as error:
-        raise error
+    import uvicorn
+    uvicorn.run(APP, host="0.0.0.0", port=CONFIG.PORT)

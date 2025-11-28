@@ -1,2 +1,4 @@
 botbuilder-integration-aiohttp>=4.15.0
 openai==2.8.1
+uvicorn==0.37.0
+fastapi==0.121.3
