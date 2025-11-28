@@ -15,7 +15,7 @@ from config import DefaultConfig
 CONFIG = DefaultConfig()
 
 # 创建 FastAPI 应用
-APP = FastAPI()
+app = FastAPI()
 
 # 创建适配器
 ADAPTER = CloudAdapter(ConfigurationBotFrameworkAuthentication(CONFIG))
@@ -46,11 +46,11 @@ ADAPTER.on_turn_error = on_error
 BOT = EchoBot()
 
 # 处理请求的路由
-@APP.post("/api/messages")
+@app.post("/api/messages")
 async def messages(req: Request):
     return await ADAPTER.process(req, BOT)
 
 # 运行 FastAPI 应用
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(APP, host="0.0.0.0", port=CONFIG.PORT)
+    uvicorn.run(app, host="0.0.0.0", port=CONFIG.PORT)
