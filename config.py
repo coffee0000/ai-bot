@@ -10,11 +10,16 @@ import os
 class DefaultConfig:
     """ Bot Configuration """
 
-    PORT = 8000
+    PORT = int(os.environ.get("PORT", 3978))
+    
+    # Bot Framework 认证配置
     APP_ID = os.environ.get("MicrosoftAppId", "")
     APP_PASSWORD = os.environ.get("MicrosoftAppPassword", "")
     APP_TYPE = os.environ.get("MicrosoftAppType", "MultiTenant")
     APP_TENANTID = os.environ.get("MicrosoftAppTenantId", "")
-    ENDPOINT_URL = os.environ.get("ENDPOINT_URL")
-    DEPLOYMENT_NAME = os.environ.get("DEPLOYMENT_NAME")
-    AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY")
+    
+    # Azure OpenAI 配置
+    ENDPOINT_URL = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
+    DEPLOYMENT_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "")
+    AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY", "")
+    AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION", "2025-01-01-preview")

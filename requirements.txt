@@ -1,4 +1,6 @@
-botbuilder-integration-aiohttp>=4.15.0
-openai==2.8.1
-uvicorn==0.37.0
 fastapi==0.121.3
+uvicorn==0.37.0
+openai==2.8.1
+pydantic>=2.2.0
+botbuilder-core>=4.15.0
+botbuilder-integration-aiohttp>=4.15.0
