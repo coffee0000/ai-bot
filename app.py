@@ -82,23 +82,28 @@ async def messages(req: Request):
                 payload = None
 
             if isinstance(payload, dict):
-                # Activity 的 serviceUrl 通常在顶层字段
-                svc = payload.get("serviceUrl")
-                # 只有在明确设置 HOST_ALIAS 时才替换 localhost
-                # 这避免在生产环境（Azure App Service）中误用 host.docker.internal
+                # 只有在本地开发模式（设置了 HOST_ALIAS）时才替换 localhost
                 host_alias = os.environ.get("HOST_ALIAS", None)
 
-                if host_alias and isinstance(svc, str) and "localhost" in svc:
-                    payload["serviceUrl"] = svc.replace("localhost", host_alias)
+                if host_alias:
+                    svc = payload.get("serviceUrl")
+                    if isinstance(svc, str) and "localhost" in svc:
+                        payload["serviceUrl"] = svc.replace("localhost", host_alias)
 
-                    # 重新构造一个 Starlette Request，传给 Adapter
-                    modified_body = json.dumps(payload).encode("utf-8")
-                    scope = req.scope
+                        # 重新构造一个 Starlette Request，传给 Adapter
+                        modified_body = json.dumps(payload).encode("utf-8")
+                        scope = req.scope
 
-                    async def receive() -> dict:
-                        return {"type": "http.request", "body": modified_body, "more_body": False}
+                        async def receive() -> dict:
+                            return {"type": "http.request", "body": modified_body, "more_body": False}
 
-                    new_req = StarletteRequest(scope, receive)
+                        new_req = StarletteRequest(scope, receive)
+                        response = await ADAPTER.process(new_req, BOT)
+                        if response is None:
+                            return JSONResponse(status_code=HTTPStatus.OK, content={"status": "ok"})
+                        return response
+                
+                # 生产环境或未设置 HOST_ALIAS 时，直接用原始 Request（不替换）
                     response = await ADAPTER.process(new_req, BOT)
                     if response is None:
                         return JSONResponse(status_code=HTTPStatus.OK, content={"status": "ok"})
