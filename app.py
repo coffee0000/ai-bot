@@ -84,9 +84,11 @@ async def messages(req: Request):
             if isinstance(payload, dict):
                 # Activity 的 serviceUrl 通常在顶层字段
                 svc = payload.get("serviceUrl")
-                host_alias = os.environ.get("HOST_ALIAS", "host.docker.internal")
+                # 只有在明确设置 HOST_ALIAS 时才替换 localhost
+                # 这避免在生产环境（Azure App Service）中误用 host.docker.internal
+                host_alias = os.environ.get("HOST_ALIAS", None)
 
-                if isinstance(svc, str) and "localhost" in svc:
+                if host_alias and isinstance(svc, str) and "localhost" in svc:
                     payload["serviceUrl"] = svc.replace("localhost", host_alias)
 
                     # 重新构造一个 Starlette Request，传给 Adapter
