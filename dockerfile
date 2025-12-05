@@ -20,4 +20,5 @@ COPY . .
 
 EXPOSE 3978
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "3978", "--workers", "2"]
+CMD ["gunicorn", "app:APP", "--bind", "0.0.0.0:3978", "--worker-class", "aiohttp.GunicornWebWorker", "--workers", "4"]
+
