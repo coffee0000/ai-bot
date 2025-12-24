@@ -1,0 +1,12 @@
+	1.	aiohttpで POST /api/messages のエンドポイントを用意して、Bot Framework から Activity を受け取れるようにする。
+	2.	Bot Framework（Python）の呼び出し流れ（adapter.process_activity → ActivityHandler.on_message_activity）を把握する。
+	3.	Activity からユーザー入力テキストを取得する場所（activity.text）と、返信方法（turn_context.send_activity）を理解する。
+	4.	Activity から会話情報を取得する場所（activity.conversation.id / conversationType）を理解する。
+	5.	Bot Framework Emulator の Activity と Teams の Activity のフィールド差分（Emulatorで出ない項目）を検証する。
+	6.	ローカル開発時に Adapter のリクエスト検証（認証）を有効/無効にする条件と設定方法を整理する（ユーザーのログイン認証ではない）。
+	7.	「同一セッションで回答生成中は次の質問をブロックする」並行制御が、同時リクエストでも確実に効くか検証する。
+	8.	Bot の主処理で例外を一括ハンドリングし、finally を必ず実行できる設計にする（waiting解除など）。
+	9.	初期リリースの返信形式はテキストメッセージのみに固定する（カード/リッチ表現は扱わない）。
+	10.	Emulator からローカルのエンドポイントに接続し、メッセージが確実に on_message_activity に入ることを確認する。
+	11.	Teams App Manifest で Bot の scope を personal のみに制限する設定を把握する（後段の実機検証に影響する）。
+	12.	Teams 実機検証には通常「外部から到達可能なHTTPSエンドポイント（tunnel）」と「messaging endpointの向き先変更」が必要になる点を理解しておく。
