@@ -24,3 +24,4 @@ echo "[起動] ローカル wheel のみから依存関係をインストール�
 
 echo "[起動] gunicorn を起動します..."
 exec "$VENV_DIR/bin/gunicorn" app:app --bind "0.0.0.0:${PORT}"
+sleep infinity
