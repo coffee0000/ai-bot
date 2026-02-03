@@ -16,11 +16,10 @@ if [ ! -d "$VENV_DIR" ]; then
   python -m venv "$VENV_DIR" || exit 1
 fi
 
-# ② ローカルの wheel（オフライン依存）から依存関係をインストール
+# ② ローカル wheel のみから依存関係をインストール（完全オフライン）
 echo "[起動] ローカル依存パッケージからインストールします: $WHEEL_DIR"
-"$VENV_DIR/bin/python" -m pip install -U pip || exit 1
-"$VENV_DIR/bin/pip" install --no-index --find-links="$WHEEL_DIR" -r requirements.txt || exit 1
+"$VENV_DIR/bin/pip" install   --no-index   --find-links="$WHEEL_DIR"   -r requirements.txt || exit 1
 
-# ③ gunicorn でアプリケーションを起動
+# ③ gunicorn 起動
 echo "[起動] gunicorn を起動します..."
 exec "$VENV_DIR/bin/gunicorn" app:app --bind "0.0.0.0:${PORT}"
