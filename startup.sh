@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# ※ Azure App Service では sh / bash が混在するため、set -euo pipefail は使用しない
 
 APP_DIR="/home/site/wwwroot"
 VENV_DIR="${APP_DIR}/.venv"
