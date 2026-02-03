@@ -10,16 +10,17 @@ echo "[起動] 使用ポート: ${PORT:-未設定}"
 
 cd "$APP_DIR" || exit 1
 
-# ① 仮想環境を作成（初回のみ）
 if [ ! -d "$VENV_DIR" ]; then
   echo "[起動] 仮想環境を作成します: $VENV_DIR"
   python -m venv "$VENV_DIR" || exit 1
 fi
 
-# ② ローカル wheel のみから依存関係をインストール（完全オフライン）
-echo "[起動] ローカル依存パッケージからインストールします: $WHEEL_DIR"
+# 外部の pip 設定を完全に無効化（絶対に外へ出ない）
+export PIP_NO_INDEX=1
+export PIP_FIND_LINKS="$WHEEL_DIR"
+
+echo "[起動] ローカル wheel のみから依存関係をインストールします: $WHEEL_DIR"
 "$VENV_DIR/bin/pip" install   --no-index   --find-links="$WHEEL_DIR"   -r requirements.txt || exit 1
 
-# ③ gunicorn 起動
 echo "[起動] gunicorn を起動します..."
 exec "$VENV_DIR/bin/gunicorn" app:app --bind "0.0.0.0:${PORT}"
