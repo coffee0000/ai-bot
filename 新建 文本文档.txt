@@ -1,0 +1,4 @@
+curl -X POST https://<你的app>.azurewebsites.net/api/messages ^
+ -H "Content-Type: application/json" ^
+ -H "Authorization: Bearer DUMMY_TOKEN" ^
+ -d "{\"type\":\"message\",\"id\":\"test-id-001\",\"serviceUrl\":\"https://smba.trafficmanager.net/emea/\",\"channelId\":\"emulator\",\"from\":{\"id\":\"user1\",\"name\":\"test-user\"},\"conversation\":{\"id\":\"conv1\"},\"recipient\":{\"id\":\"bot\",\"name\":\"bot\"},\"text\":\"hello from cmd\"}"
